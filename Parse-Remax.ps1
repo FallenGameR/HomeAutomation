@@ -5,6 +5,22 @@ filter get( [string] $key )
     $psitem | parse "$key\s*:\s+(\S+(\s\S+)*)"
 }
 
+filter schools
+{
+    function go( $school )
+    {
+        if( -not $school ) {return}
+
+        $query = [Web.HttpUtility]::UrlEncode( "schooldigger wa $school" )
+        $url = "http://www.google.com/search?btnI=1&q=$query"
+        start $url
+    }
+
+    go $psitem.senior
+    go $psitem.middle
+    go $psitem.elementary
+}
+
 Add-Type -Assembly PresentationCore
 Add-Type -AssemblyName System.Web
 $text = [Windows.Clipboard]::GetText()
@@ -35,21 +51,10 @@ $floor = $text | get 'Floor Cvr'
 $appliances = $text | get 'Appliances'
 $interior = $text | get 'Interior Ft'
 
-construct price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
+$result = construct price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
+$result | schools
+$result
 
-filter schools
-{
-    function go( $school )
-    {
-        if( -not $school ) {return}
-
-        $query = [Web.HttpUtility]::UrlEncode( "schooldigger wa $school" )
-        $url = "http://www.google.com/search?btnI=1&q=$query"
-        start $url
-    }
-
-    go $psitem.elementary
-    go $psitem.middle
-    go $psitem.senior
-}
-
+# better search on schools
+# search on redfin, to schools
+# search on google earth
