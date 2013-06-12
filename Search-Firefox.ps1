@@ -14,14 +14,15 @@ if( -not (Select-Window firefox) )
 function fire( $command )
 {
     Select-Window firefox | Send-Keys $command
-    sleep -m 500
+    sleep -m 200
     $command
 }
 
 function goto( $text )
 {
-    fire "^L"
+    fire "{ESC}^l"
     fire "g $text{ENTER}"
+    sleep 3
     fire "^fSearch tools{ENTER}{ESC}"
     fire "{TAB}{TAB}{TAB}{TAB}{TAB}{ENTER}"
 }
