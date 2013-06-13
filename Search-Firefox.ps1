@@ -1,4 +1,4 @@
-ipmo wasp.dll
+ipmo $PSScriptRoot\wasp.dll
 
 # Make sure firefox is running
 if( -not (Select-Window firefox) )
@@ -27,12 +27,10 @@ function goto( $text )
     fire "{TAB}{TAB}{TAB}{TAB}{TAB}{ENTER}"
 }
 
+<#
+
 goto "schooldigger wa Bennett Elem"
-
-
 goto "redfin 2035 W Lake Sammamish Pkwy SE, Bellevue 98008"
-
-
 
 while( $true )
 {
@@ -41,4 +39,4 @@ while( $true )
     $y = [Windows.Forms.Cursor]::Position.Y
     "X = $x      Y = $y"
 }
-
+#>

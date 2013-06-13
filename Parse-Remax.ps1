@@ -1,5 +1,7 @@
 # http://www.matrix.nwmls.com/Matrix/Public/Portal.aspx?L=1&k=2238933XSKD0&p=DE-26917322--F
 
+. $PSScriptRoot\Search-Firefox.ps1
+
 filter get( [string] $key )
 {
     $psitem | parse "$key\s*:\s+(\S+(\s\S+)*)"
