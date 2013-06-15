@@ -13,8 +13,8 @@ filter schools
     {
         if( -not $school ) {return}
 
-        $found = Invoke-BingQuery "schooldigger wa $school"
-        start $found[0].Url
+        $found = Invoke-BingQuery "schooldigger wa $school" | select -f 1
+        start $found.Url
     }
 
     go $psitem.senior
@@ -24,6 +24,8 @@ filter schools
 
 filter redfin
 {
+    $found = Invoke-BingQuery "redfin wa $($psitem.address)" | select -f 1
+    start ($found.Url + "#schools")
 }
 
 function Invoke-BingQuery
