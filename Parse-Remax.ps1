@@ -2,6 +2,21 @@
 
 . $PSScriptRoot\Search-Firefox.ps1
 
+function ensure( $program )
+{
+    if( -not (gps $program) )
+    {
+        start $program
+        while( -not (gps $program) )
+        {
+            sleep -Milliseconds 200
+        }
+    }
+}
+
+ensure firefox
+ensure googleearth
+
 filter get( [string] $key )
 {
     $psitem | parse "$key\s*:\s+(\S+(\s\S+)*)"
@@ -25,7 +40,7 @@ filter schools
 filter redfin
 {
     $found = Invoke-BingQuery "redfin wa $($psitem.address)" | select -f 1
-    start ($found.Url + "#schools")
+    start ($found.Url.Trim("#!") + "#schools")
 }
 
 function Invoke-BingQuery
@@ -92,8 +107,8 @@ $interior = $text | get 'Interior Ft'
 
 $result = construct address mls status county community price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
 $result | schools
+$result | redfin
 $result
 
-# search on redfin, to schools
 # search on google earth
 # search on imap
