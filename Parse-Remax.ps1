@@ -43,6 +43,11 @@ filter redfin
     start ($found.Url.Trim("#!") + "#schools")
 }
 
+filter earth
+{
+    Select-Window googleearth | Select-Control -Title "search_field_" -Recurse | Send-Keys "^a$($psitem.address){ENTER}"
+}
+
 function Invoke-BingQuery
 {
     param
@@ -106,9 +111,11 @@ $appliances = $text | get 'Appliances'
 $interior = $text | get 'Interior Ft'
 
 $result = construct address mls status county community price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
+$result
+$result | earth
 $result | schools
 $result | redfin
-$result
+$result | earth
 
-# search on google earth
 # search on imap
+# search path from address to redmond building 42
