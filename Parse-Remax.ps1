@@ -22,6 +22,10 @@ filter schools
     go $psitem.elementary
 }
 
+filter redfin
+{
+}
+
 function Invoke-BingQuery
 {
     param
@@ -52,6 +56,12 @@ Add-Type -Assembly PresentationCore
 Add-Type -AssemblyName System.Web
 $text = [Windows.Clipboard]::GetText()
 
+$address = ($text -split "`r?`n")[20]
+$mls = $text | get 'MLS#'
+$status = $text | get 'Status'
+$county = $text | get 'County'
+$community = $text | get 'Commty'
+
 $price = $text | get 'LP'
 $footage = $text | get 'SF'
 $year = $text | get 'Yr Built'
@@ -78,11 +88,10 @@ $floor = $text | get 'Floor Cvr'
 $appliances = $text | get 'Appliances'
 $interior = $text | get 'Interior Ft'
 
-$result = construct price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
+$result = construct address mls status county community price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
 $result | schools
 $result
 
-# better search on schools
 # search on redfin, to schools
 # search on google earth
 # search on imap
