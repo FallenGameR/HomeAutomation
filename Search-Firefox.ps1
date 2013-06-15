@@ -20,6 +20,7 @@ function fire( $command )
 
 function goto( $text )
 {
+    # NOTE: doesn't work when google asks 'did you mean ...'
     fire "{ESC}^l"
     fire "g $text{ENTER}"
     sleep 3

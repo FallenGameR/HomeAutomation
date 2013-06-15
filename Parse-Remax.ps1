@@ -13,15 +13,40 @@ filter schools
     {
         if( -not $school ) {return}
 
-        $query = [Web.HttpUtility]::UrlEncode( "schooldigger wa $school" )
-        $url = "http://www.google.com/search?btnI=1&q=$query"
-        start $url
+        $found = Invoke-BingQuery "schooldigger wa $school"
+        start $found[0].Url
     }
 
     go $psitem.senior
     go $psitem.middle
     go $psitem.elementary
 }
+
+function Invoke-BingQuery
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [string] $Query,
+        [switch] $Raw
+    )
+
+    $env:BingAPIKey = "Qjkn4cg7ZPjqoY25ZmHa2L61zz1mScshcv9fOOxyCbI"
+    $bingUrl = "https://api.datamarket.azure.com/Bing/Search/Web?Query='$($Query)'&`$format=JSON"
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes("$($Env:BingAPIKey):$($Env:BingAPIKey)")
+    $authorisation = "Basic {0}" -f [System.Convert]::ToBase64String($bytes)
+    $result = (Invoke-RestMethod -Uri $BingUrl -Headers @{Authorization=$authorisation})
+
+    if( $raw )
+    {
+        $result
+    }
+    else
+    {
+        $result.d.results
+    }
+}
+
 
 Add-Type -Assembly PresentationCore
 Add-Type -AssemblyName System.Web
