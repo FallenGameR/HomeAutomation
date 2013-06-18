@@ -120,8 +120,18 @@ $result | earth
 # search on imap
 # search path from address to redmond building 42
 
+function Search-Map( $text )
+{
+    # Encode text of the query
+    $query = "http://dev.virtualearth.net/REST/V1/Imagery/Map/Road/"
+    $query += [Uri]::EscapeDataString( $text )
+    $query += "?mapLayer=TrafficFlow&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ"
+
+    # Download the picture
+    start $query
+}
+
 <#
 http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml&wp.0=london&wp.1=leeds&avoid=minimizeTolls&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ
-http://dev.virtualearth.net/REST/V1/Imagery/Map/Road/space%20needle%20seattle?mapLayer=TrafficFlow&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ
 http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/Routes?wp.0=Seattle,WA&wp.1=Redmond,WA&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ
 #>
