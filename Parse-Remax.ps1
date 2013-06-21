@@ -39,6 +39,7 @@ function redfin( $address )
 function earth( $address )
 {
     select-window google* | Select-Control -Title "search_field_" -Recurse| Send-Keys "{end}+{home}$address{ENTER}"
+    $address | clip
 }
 
 function Search-Map( $text )
@@ -52,7 +53,7 @@ function Search-Map( $text )
     start $query
 }
 
-function Get-DriveDuration( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
+function drive( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
 {
     $query = "http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml"
     $query += "&wp.0=" + [Uri]::EscapeDataString($from)
@@ -64,7 +65,7 @@ function Get-DriveDuration( $from = "redmond,wa", $to = "Microsoft Building 42, 
     [timespan]::FromSeconds($seconds).ToString()
 }
 
-function Get-DriveMap( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
+function map( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
 {
     $query = "http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/Routes"
     $query += "?wp.0=" + [Uri]::EscapeDataString($from)
@@ -138,13 +139,14 @@ $interior = $text | get 'Interior Ft'
 
 $result = construct address mls status county community price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
 $result
-Get-DriveDuration $result.address
-Get-DriveMap $result.address
+drive $result.address
 
-earth $result.address
-school $result.senior
-school $result.middle
-school $result.elementary
+@'
+
+drive $result.address; map $result.address
 redfin $result.address
+earth $result.address
+school $result.senior; school $result.middle; school $result.elementary
+'@
 
 # search on imap
