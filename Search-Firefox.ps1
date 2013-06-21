@@ -1,10 +1,10 @@
 ipmo $PSScriptRoot\wasp.dll
 
 # Make sure firefox is running
-if( -not (gps firefox) )
+if( -not (gps firefox -ea Ignore) )
 {
     start firefox
-    while( -not (gps firefox) )
+    while( -not (gps firefox -ea Ignore) )
     {
         sleep -Milliseconds 200
     }

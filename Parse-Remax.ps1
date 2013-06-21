@@ -4,10 +4,10 @@
 
 function ensure( $program )
 {
-    if( -not (gps $program) )
+    if( -not (gps $program -ea Ignore) )
     {
         start $program
-        while( -not (gps $program) )
+        while( -not (gps $program -ea Ignore) )
         {
             sleep -Milliseconds 200
         }
@@ -46,6 +46,40 @@ filter redfin
 filter earth
 {
     Select-Window googleearth | Select-Control -Title "search_field_" -Recurse | Send-Keys "^a$($psitem.address){ENTER}"
+}
+
+
+function Search-Map( $text )
+{
+    # Encode text of the query
+    $query = "http://dev.virtualearth.net/REST/V1/Imagery/Map/Road/"
+    $query += [Uri]::EscapeDataString( $text )
+    $query += "?mapLayer=TrafficFlow&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ"
+
+    # Download the picture
+    start $query
+}
+
+function Get-DriveDuration( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
+{
+    $query = "http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml"
+    $query += "&wp.0=" + [Uri]::EscapeDataString($from)
+    $query += "&wp.1=" + [Uri]::EscapeDataString($to)
+    $query += "&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ"
+
+    $xml = [xml] (Download-Url $query)
+    $seconds = $xml.Response.ResourceSets.ResourceSet.Resources.Route.TravelDuration
+    [timespan]::FromSeconds($seconds).ToString()
+}
+
+function Get-DriveMap( $from = "redmond,wa", $to = "Microsoft Building 42, WA" )
+{
+    $query = "http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/Routes"
+    $query += "?wp.0=" + [Uri]::EscapeDataString($from)
+    $query += "&wp.1=" + [Uri]::EscapeDataString($to)
+    $query += "&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ"
+
+    start $query
 }
 
 function Invoke-BingQuery
@@ -112,26 +146,10 @@ $interior = $text | get 'Interior Ft'
 
 $result = construct address mls status county community price footage year pricePerFootage lot elementary middle senior hoa taxes style roof exterior sewer level details features cool energy heat floor appliances interior
 $result
+Get-DriveDuration $result.address
+Get-DriveMap $result.address
 $result | earth
 $result | schools
 $result | redfin
-$result | earth
 
 # search on imap
-# search path from address to redmond building 42
-
-function Search-Map( $text )
-{
-    # Encode text of the query
-    $query = "http://dev.virtualearth.net/REST/V1/Imagery/Map/Road/"
-    $query += [Uri]::EscapeDataString( $text )
-    $query += "?mapLayer=TrafficFlow&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ"
-
-    # Download the picture
-    start $query
-}
-
-<#
-http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml&wp.0=london&wp.1=leeds&avoid=minimizeTolls&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ
-http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/Routes?wp.0=Seattle,WA&wp.1=Redmond,WA&key=Ahg6X-c77_g5gp0YXI9hfR2ly296HlEuGe2pqSmmepHcBKtQdMXXkPT0Q6ES89SZ
-#>
