@@ -38,11 +38,7 @@ function redfin( $address )
 
 function earth( $address )
 {
-    $window = select-window google* | Set-WindowActive
-    sleep -Milliseconds 200
-    $control = $window | Select-Control -Title "search_field_" -Recurse
-    sleep -Milliseconds 200
-    $control | Send-Keys "^a$addres){ENTER}"
+    select-window google* | Select-Control -Title "search_field_" -Recurse| Send-Keys "{end}+{home}$address{ENTER}"
 }
 
 function Search-Map( $text )
