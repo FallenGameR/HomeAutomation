@@ -45,9 +45,12 @@ filter redfin
 
 filter earth
 {
-    Select-Window googleearth | Select-Control -Title "search_field_" -Recurse | Send-Keys "^a$($psitem.address){ENTER}"
+    $window = select-window google* | Set-WindowActive
+    sleep -Milliseconds 200
+    $control = $window | Select-Control -Title "search_field_" -Recurse
+    sleep -Milliseconds 200
+    $control | Send-Keys "^a$($psitem.address){ENTER}"
 }
-
 
 function Search-Map( $text )
 {
