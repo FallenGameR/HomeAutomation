@@ -22,34 +22,27 @@ filter get( [string] $key )
     $psitem | parse "$key\s*:\s+(\S+(\s\S+)*)"
 }
 
-filter schools
+function school( $name )
 {
-    function go( $school )
-    {
-        if( -not $school ) {return}
+    if( -not $name ) {return}
 
-        $found = Invoke-BingQuery "schooldigger wa $school" | select -f 1
-        start $found.Url
-    }
-
-    go $psitem.senior
-    go $psitem.middle
-    go $psitem.elementary
+    $found = Invoke-BingQuery "schooldigger wa $name" | select -f 1
+    start $found.Url
 }
 
-filter redfin
+function redfin( $address )
 {
-    $found = Invoke-BingQuery "redfin wa $($psitem.address)" | select -f 1
+    $found = Invoke-BingQuery "redfin wa $address" | select -f 1
     start ($found.Url.Trim("#!") + "#schools")
 }
 
-filter earth
+function earth( $address )
 {
     $window = select-window google* | Set-WindowActive
     sleep -Milliseconds 200
     $control = $window | Select-Control -Title "search_field_" -Recurse
     sleep -Milliseconds 200
-    $control | Send-Keys "^a$($psitem.address){ENTER}"
+    $control | Send-Keys "^a$addres){ENTER}"
 }
 
 function Search-Map( $text )
@@ -151,8 +144,11 @@ $result = construct address mls status county community price footage year price
 $result
 Get-DriveDuration $result.address
 Get-DriveMap $result.address
-$result | earth
-$result | schools
-$result | redfin
+
+earth $result.address
+school $result.senior
+school $result.middle
+school $result.elementary
+redfin $result.address
 
 # search on imap
